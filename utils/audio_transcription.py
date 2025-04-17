@@ -1,5 +1,6 @@
 from deepgram import DeepgramClient, PrerecordedOptions
 import traceback
+import time
 
 class AudioTranscriber:
     def __init__(self, api_key, audio_path, output_path):
@@ -8,6 +9,7 @@ class AudioTranscriber:
         self.output_path = output_path
 
     def transcribe_audio(self):
+        start_time = time.time()
         try:
             deepgram = DeepgramClient(self.api_key)
             options = PrerecordedOptions(model="nova-3", language="en")
@@ -24,3 +26,4 @@ class AudioTranscriber:
         except Exception as e:
             print("Exception during transcription:")
             traceback.print_exc()
+        print(f"[AudioTranscriber] Time taken: {time.time() - start_time:.2f} seconds")

@@ -1,5 +1,6 @@
 import json
 import traceback
+import time
 
 class TranscriptProcessor:
     def __init__(self, json_path, output_path):
@@ -7,6 +8,7 @@ class TranscriptProcessor:
         self.output_path = output_path
 
     def extract_transcript(self):
+        start_time = time.time()
         try:
             with open(self.json_path, "r") as f:
                 data = json.load(f)
@@ -21,3 +23,4 @@ class TranscriptProcessor:
         except Exception as e:
             print("Failed to extract transcript:")
             traceback.print_exc()
+        print(f"[TranscriptProcessor] Time taken: {time.time() - start_time:.2f} seconds")

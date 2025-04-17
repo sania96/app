@@ -1,4 +1,5 @@
 import json
+import time
 
 class FlaggedTimestampsExtractor:
     def __init__(self, hate_words_file, transcript_file, output_file):
@@ -9,7 +10,6 @@ class FlaggedTimestampsExtractor:
     def load_hate_words(self):
         with open(self.hate_words_file, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Normalize: split, strip, lowercase
             return [word.strip().lower() for word in data["issues_detected"].split(",")]
 
     def load_transcript_words(self):
@@ -36,7 +36,9 @@ class FlaggedTimestampsExtractor:
         print(f"Flagged timestamps saved to {self.output_file}")
 
     def extract_flagged_timestamps(self):
+        start_time = time.time()
         hate_words = self.load_hate_words()
         transcript_words = self.load_transcript_words()
         flagged = self.match_hate_words(hate_words, transcript_words)
         self.save_flagged_words(flagged)
+        print(f"[FlaggedTimestampsExtractor] Time taken: {time.time() - start_time:.2f} seconds")

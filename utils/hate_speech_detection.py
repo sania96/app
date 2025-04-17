@@ -1,6 +1,7 @@
 from openai import OpenAI
 import json
 import traceback
+import time
 
 class HateSpeechDetector:
     def __init__(self, api_key, transcript_path, output_path, model_name="gpt-3.5-turbo"):
@@ -36,6 +37,7 @@ class HateSpeechDetector:
             return None
 
     def detect_issues_in_transcript(self):
+        start_time = time.time()
         try:
             with open(self.transcript_path, "r", encoding="utf-8") as f:
                 transcript = f.read()
@@ -56,3 +58,4 @@ class HateSpeechDetector:
         except Exception as e:
             print("Failed to process transcript:")
             traceback.print_exc()
+        print(f"[HateSpeechDetector] Time taken: {time.time() - start_time:.2f} seconds")
