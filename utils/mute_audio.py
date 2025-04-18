@@ -1,8 +1,8 @@
 import subprocess
 import json
 import time
-import tempfile
-import os
+import shutil
+import traceback
 
 class MuteAudio:
     def __init__(self, video_file, timestamps_file, output_video_file):
@@ -18,14 +18,16 @@ class MuteAudio:
     def mute_segments(self, mute_ranges):
         start_time = time.time()
 
-        filter_parts = []
-        for start, end in mute_ranges:
-            filter_parts.append(f"volume=enable='between(t,{start},{end})':volume=0")
-
-        if not filter_parts:
-            print("No segments to mute.")
+        if not mute_ranges:
+            print("No segments to mute. Copying input video as is...")
+            shutil.copyfile(self.video_file, self.output_video_file)
+            print("Video copied successfully!")
+            print(f"[MuteAudio] Time taken: {time.time() - start_time:.2f} seconds")
             return
 
+        filter_parts = [
+            f"volume=enable='between(t,{start},{end})':volume=0" for start, end in mute_ranges
+        ]
         filter_complex = ",".join(filter_parts)
 
         try:
