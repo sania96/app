@@ -13,7 +13,12 @@ class TranscriptProcessor:
             with open(self.json_path, "r") as f:
                 data = json.load(f)
 
-            transcript = data["results"]["channels"][0]["alternatives"][0]["transcript"]
+            # Check if the transcription was successful
+            if data["status"] != "completed":
+                raise ValueError(f"Transcription not completed. Status: {data['status']}")
+
+            # Extract the transcript text.  It's now directly in the "text" field.
+            transcript = data["text"]
 
             with open(self.output_path, "w", encoding="utf-8") as f:
                 f.write(transcript)

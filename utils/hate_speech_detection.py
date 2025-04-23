@@ -15,7 +15,8 @@ class HateSpeechDetector:
             system_prompt = (
                 "Detect hate speech, slangs, and offensive language in the text provided. "
                 "Always consider one word at a time, it should be not space separated, one entry is ONE WORD ONLY. "
-                "Like *fuck*, *fucking* or *jerk* are also considered as hate word. "
+                "Like *fuck*, *fucking*, *ass* or *jerk* are also considered as hate word. "
+                "Be strict while shortlisting words, any hate word, slang should not be skipped."
                 "Just return the shortlisted words in a comma-separated list."
             )
 

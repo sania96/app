@@ -26,14 +26,14 @@ def process_video(video_path):
     flagged_timestamps = os.path.join(outputs_dir, f"{base_name}_flagged.json")
     output_video = os.path.join(outputs_dir, f"{base_name}_censored.mp4")
 
-    deepgram_api_key = os.getenv("DEEPGRAM_API_KEY")
+    assembly_api_key = os.getenv("ASSEMBLY_API_KEY")
     hate_speech_api_key = os.getenv("HATE_SPEECH_API_KEY")
 
     try:
         audio_extractor = AudioExtractor(video_path, audio_path)
         audio_extractor.extract_audio()
 
-        audio_transcriber = AudioTranscriber(deepgram_api_key, audio_path, transcript_json)
+        audio_transcriber = AudioTranscriber(assembly_api_key, audio_path, transcript_json)
         audio_transcriber.transcribe_audio()
 
         transcript_processor = TranscriptProcessor(transcript_json, transcript_text)

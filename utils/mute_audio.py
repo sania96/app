@@ -13,7 +13,9 @@ class MuteAudio:
     def load_flagged_timestamps(self):
         with open(self.timestamps_file, "r", encoding="utf-8") as f:
             data = json.load(f)
+            print("data-------------------",json.dumps(data,indent=4))
             return [(item["start"], item["end"]) for item in data["flagged"]]
+
 
     def mute_segments(self, mute_ranges):
         start_time = time.time()

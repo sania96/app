@@ -1,5 +1,7 @@
 import json
 import time
+import traceback
+import re  # Import the regular expression module
 
 class FlaggedTimestampsExtractor:
     def __init__(self, hate_words_file, transcript_file, output_file):
@@ -10,22 +12,36 @@ class FlaggedTimestampsExtractor:
     def load_hate_words(self):
         with open(self.hate_words_file, "r", encoding="utf-8") as f:
             data = json.load(f)
+            print("hate words---------------", json.dumps(data, indent=4))
             return [word.strip().lower() for word in data["issues_detected"].split(",")]
 
     def load_transcript_words(self):
-        with open(self.transcript_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data["results"]["channels"][0]["alternatives"][0]["words"]
+        try:
+            with open(self.transcript_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                print("transcript file-------------", json.dumps(data, indent=4))
+            # Check for "words" key at the top level
+            if "words" in data:
+                return data["words"]
+            else:
+                raise KeyError("'words' key not found in the transcript JSON. The JSON structure is different than expected.")
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error loading transcript words: {e}")
+            traceback.print_exc()
+            return []  # Return an empty list to avoid further errors
 
     def match_hate_words(self, hate_words, transcript_words):
         flagged = []
         for word_data in transcript_words:
-            word_text = word_data["word"].lower()
+            # Remove punctuation from the word before comparison
+            word_text = re.sub(r'[^\w\s]', '', word_data["text"]).lower()
             if word_text in hate_words:
+                start_seconds = word_data["start"] / 1000.0  # Convert ms to seconds
+                end_seconds = word_data["end"] / 1000.0  # Convert ms to seconds
                 flagged.append({
                     "word": word_text,
-                    "start": word_data["start"],
-                    "end": word_data["end"],
+                    "start": start_seconds,
+                    "end": end_seconds,
                     "confidence": word_data.get("confidence", None)
                 })
         return flagged
